@@ -1,0 +1,28 @@
+LZW encoder/decoder
+%%%%%%%%%%%%%%%%%%%%
+- Algorithm details, see for example:
+	https://en.wikipedia.org/wiki/Lempel%E2%80%93Ziv%E2%80%93Welch
+	https://www.youtube.com/watch?v=j2HSd3HCpDs
+
+
+The encoder takes a text file as input, encodes it and puts it in another output file. 
+The decoder takes the encoded file and decodes it to the original file.
+I should have an additional file to check if there's any different between the original file and the decoded one.
+
+
+%%%%%%%%%%
+Done
+%%%%%%%%%%
+	1.0: Previous code I wrote earlier (Early Febuary 2018). 
+		 Seems to work, but not optimized. Uses vectors to store the dictionary and relies on a recursive function to build the dictionary.
+
+
+%%%%%%%%%%
+TODO: 	
+%%%%%%%%%%
+	1.1: Print the output of the encoder to a file. 
+	1.2: Print the output of the decoder to a file.
+	1.3: Script for checking the difference between the decoded file and the original.
+
+	2.0 Use hash table (sets or maps) to store the dictionary, hopefully allowing for faster decoding/encoding.
+		Use a non-recursive function to build the dictionary.
