@@ -72,7 +72,7 @@ void inOrOut (vector<string> & vec, string str, int* ptr, int* ptr_stop){
 int main () {
 
   // Read in text to decode
-  string fileName = "InputText_1/EncodedText.txt";
+  string fileName = "InputText/EncodedText.txt";
 
   int data;
   vector<int> toDecode;
@@ -85,7 +85,7 @@ int main () {
     input_file.close();
   }
   else { 
-    cout << "Error: Couldn't open the file" << endl; 
+    cout << "Error: Unable to open input file" << endl; 
     return 0; 
   }
 

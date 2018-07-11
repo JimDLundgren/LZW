@@ -1,13 +1,13 @@
-all: LZW_Decoder.ex LZW_Encoder.ex
+all: DecoderLZW.ex EncoderLZW.ex
 
 
-LZW_Decoder.ex: LZW_Decoder.cpp
-	g++ -std=c++11 LZW_Decoder.cpp -o LZW_Decoder.ex 
+DecoderLZW.ex: DecoderLZW.cpp
+	g++ -std=c++11 DecoderLZW.cpp -o DecoderLZW.ex 
 
-LZW_Encoder.ex: LZW_Encoder.cpp
-	g++ -std=c++11 LZW_Encoder.cpp -o LZW_Encoder.ex 
+EncoderLZW.ex: EncoderLZW.cpp
+	g++ -std=c++11 EncoderLZW.cpp -o EncoderLZW.ex 
 
 
 
 clean:
-	rm -v LZW_Decoder.ex LZW_Encoder.ex 
+	rm -v DecoderLZW.ex EncoderLZW.ex 

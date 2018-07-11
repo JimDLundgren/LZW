@@ -74,7 +74,7 @@ int main () {
   char * input;
   int size;
 
-  ifstream file ("InputText_1/OriginalText.txt", ios::in|ios::binary|ios::ate);
+  ifstream file ("InputText/OriginalText.txt", ios::in|ios::binary|ios::ate);
   if (file.is_open())
   {
     inputSize = file.tellg();
@@ -87,7 +87,7 @@ int main () {
 
   }
   else { 
-    cout << "Unable to open file"; 
+    cout << "Error: Unable to open input file"; 
     return 0;
   } 
   
