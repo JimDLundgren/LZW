@@ -5,13 +5,21 @@
 using namespace std;
 
 
-int main () {
+int main (int argc, char* argv[]) {
+
+
+  if (argc != 3){
+    cout << "Error: Two input files needed/only." << endl;
+    return 0;
+  }
+
 
 // Read in file 1
   streampos inputSize1;
   char * input1;
 
-  ifstream file ("InputText/OriginalText.txt", ios::in|ios::binary|ios::ate);
+  //ifstream file ("InputText/OriginalText.txt", ios::in|ios::binary|ios::ate);
+  ifstream file (argv[1], ios::in|ios::binary|ios::ate);
   if (file.is_open())
   {
     inputSize1 = file.tellg();
@@ -31,7 +39,8 @@ int main () {
   streampos inputSize2;
   char * input2;
 
-  ifstream file2 ("InputText/DecodedText.txt", ios::in|ios::binary|ios::ate);
+  //ifstream file2 ("InputText/DecodedText.txt", ios::in|ios::binary|ios::ate);
+  ifstream file2 (argv[2], ios::in|ios::binary|ios::ate);
   if (file2.is_open())
   {
     inputSize2 = file2.tellg();
