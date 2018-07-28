@@ -74,16 +74,15 @@ int main () {
   char * input;
   int size;
 
-  ifstream file ("InputText/OriginalText.txt", ios::in|ios::binary|ios::ate);
-  if (file.is_open())
-  {
-    inputSize = file.tellg();
+  ifstream inputFile ("InputText/OriginalText.txt", ios::in|ios::binary|ios::ate);
+  if (inputFile.is_open()) {
+    inputSize = inputFile.tellg();
     size = int(inputSize);
     
     input = new char [inputSize];
-    file.seekg (0, ios::beg);
-    file.read (input, inputSize);
-    file.close();
+    inputFile.seekg (0, ios::beg);
+    inputFile.read (input, inputSize);
+    inputFile.close();
 
   }
   else { 
@@ -104,8 +103,8 @@ int main () {
   }
 
 
-  ofstream fileOut ("InputText/EncodedText.txt");
-  if (fileOut.is_open()) {
+  ofstream OutputFile ("InputText/EncodedText.txt");
+  if (OutputFile.is_open()) {
 
     for(int i = 0; i < size; i++){        
       string comp_str;
@@ -120,7 +119,7 @@ int main () {
       // To follow the LZW algorithm we want to skip iterations in case we add a string of three or more characters. 
       // hence, i_add set to -1 here (-1 to compensate for the two first iterations)    
       int i_add = -1; 
-      addToDictionary(dictionaryOfWords, comp_str, p_input, i_add, fileOut);
+      addToDictionary(dictionaryOfWords, comp_str, p_input, i_add, OutputFile);
     
       // Skip iteration in case we add a string with three or more characters
       if (i_add > 0){
@@ -129,7 +128,7 @@ int main () {
     
     }
   
-  fileOut.close();
+  OutputFile.close();
   
   }
   else { 

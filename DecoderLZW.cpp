@@ -2,15 +2,14 @@
 #include <vector>
 #include <string>
 #include <algorithm>
-//#include <array>
 #include <sstream>
 #include <fstream>
 
 using namespace std;
 
 
-// Function inOrOut adds a new dictionary input, based on the encoded input  
-void inOrOut (vector<string> & vec, string str, int* ptr, int* ptr_stop){    
+// Function addToDictionary adds a new dictionary input, based on the encoded input  
+void addToDictionary (vector<string> & vec, string str, int* ptr, int* ptr_stop){    
 
   // checks if str is in the dictionary
   std::vector<string>::iterator it;
@@ -58,7 +57,7 @@ void inOrOut (vector<string> & vec, string str, int* ptr, int* ptr_stop){
     }
         
 
-    inOrOut(vec, str, ptr, ptr_stop); 
+    addToDictionary(vec, str, ptr, ptr_stop); 
   }
   // If str is not in the dictionary, add str to the dictionary
   else {  
@@ -76,13 +75,13 @@ int main () {
 
   int data;
   vector<int> toDecode;
-  ifstream input_file( fileName.c_str() );
-
-  if ( input_file.is_open() ) {
-       while (input_file >> data) {
+  
+  ifstream inputFile( fileName.c_str() );
+  if ( inputFile.is_open() ) {
+       while (inputFile >> data) {
            toDecode.push_back(data);
        }
-    input_file.close();
+    inputFile.close();
   }
   else { 
     cout << "Error: Unable to open input file" << endl; 
@@ -104,33 +103,42 @@ int main () {
   }
 
 
-  // Loop over the code words, and add a dictionary input for each according to
-  // the LZW rules
-  for(int i = 0; i < toDecode.size(); i++){        
-    int* p_input;
-    string comp_str;
-    
-    p_input = &toDecode.at(i);
+  ofstream OutputFile ("InputText/DecodedText.txt");
+  if (OutputFile.is_open()) {
+    // Loop over the code words, and add a dictionary input for each according to
+    // the LZW rules
+    for(int i = 0; i < toDecode.size(); i++){        
+      int* p_input;
+      string comp_str;
+      
+      p_input = &toDecode.at(i);
 
-    try{
-      comp_str = dictionaryOfWords.at(*p_input); 
+      try{
+        comp_str = dictionaryOfWords.at(*p_input); 
+      }
+      catch (const std::out_of_range& oor) {
+        std::cerr << "Out of Range error: " << oor.what() << '\n';
+      }
+                    
+      // comp_str holds the decode
+      // p_input points to the current code word, passed to addToDictionary to be
+      // able to check the next coming codes in the function
+      
+      // Add a new dictionary entry, constructed from the code word;
+      addToDictionary(dictionaryOfWords,comp_str,p_input,p_lastInput); //,i_add);
+      
+      // print the decoded message
+      //cout << comp_str;
+      OutputFile << comp_str; 
     }
-    catch (const std::out_of_range& oor) {
-      std::cerr << "Out of Range error: " << oor.what() << '\n';
-    }
-                  
-    // comp_str holds the decode
-    // p_input points to the current code word, passed to inOrOut to be
-    // able to check the next coming codes in the function
     
-    // Add a new dictionary entry, constructed from the code word;
-    inOrOut(dictionaryOfWords,comp_str,p_input,p_lastInput); //,i_add);
+    OutputFile.close();
     
-    // print the decoded message
-    cout << comp_str; 
   }
-  cout << endl;
-
+  else { 
+    cout << "Error: Unable to open output file" << endl; 
+    return 0;
+  } 
 
   // Uncomment to print dictionary
   /*
