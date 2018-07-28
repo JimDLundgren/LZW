@@ -2,17 +2,14 @@
 #include <vector>
 #include <string>
 #include <algorithm>
-//#include <cmath>
-//#include <cstdio>
-//#include <stdio.h>
 #include <sstream>
 #include <fstream>
 
 using namespace std;
 
 
-// Function inOrOut adds a new dictionary input, based on the text input   
-void inOrOut (vector<string> & vec, string str, char* ptr, int& counter){   
+// Function addToDictionary adds a new dictionary input, based on the text input   
+void addToDictionary (vector<string> & vec, string str, char* ptr, int& counter, ofstream &outputFile){   
   
   // checks if str is in the dictionary
   std::vector<string>::iterator it;
@@ -41,11 +38,12 @@ void inOrOut (vector<string> & vec, string str, char* ptr, int& counter){
       }      
 
       // Output the decoded part
-      cout << pos << " "; 
+      //cout << pos << " "; 
+      outputFile << pos << " ";
       return; 
     }
     // Check the new string to see if it is in the dictionary, recursively 
-    inOrOut(vec, str, ptr,counter); 
+    addToDictionary(vec, str, ptr, counter, outputFile); 
   }
   else { 
     // if str is not in the dictionary, add it
@@ -60,7 +58,9 @@ void inOrOut (vector<string> & vec, string str, char* ptr, int& counter){
       cout << "Error: Word that should be in dictionary not found" << endl;
       return;
     }
-    cout << pos << " ";
+    // Output the decoded part
+    //cout << pos << " ";
+    outputFile << pos << " ";
   } 
   
 }
@@ -87,7 +87,7 @@ int main () {
 
   }
   else { 
-    cout << "Error: Unable to open input file"; 
+    cout << "Error: Unable to open input file" << endl; 
     return 0;
   } 
   
@@ -104,34 +104,44 @@ int main () {
   }
 
 
-  for(int i = 0; i < size; i++){        
-    string comp_str;
-    char* p_input;
+  ofstream fileOut ("InputText/EncodedText.txt");
+  if (fileOut.is_open()) {
 
-    p_input = &input[i]; 
-    comp_str = *p_input; 
+    for(int i = 0; i < size; i++){        
+      string comp_str;
+      char* p_input;
+
+      p_input = &input[i]; 
+      comp_str = *p_input; 
+      
+      // comp_str holds the current character to check if it's in dictionary
+      // p_input is a pointer to the current input, used in the process to add more characters to the input string in addToDictionary()
+          
+      // To follow the LZW algorithm we want to skip iterations in case we add a string of three or more characters. 
+      // hence, i_add set to -1 here (-1 to compensate for the two first iterations)    
+      int i_add = -1; 
+      addToDictionary(dictionaryOfWords, comp_str, p_input, i_add, fileOut);
     
-    // comp_str holds the current character to check if it's in dictionary
-    // p_input is a pointer to the current input, used in the process to add more characters to the input string in inOrOut()
-        
-    // To follow the LZW algorithm we want to skip iterations in case we add a string of three or more characters. 
-    // hence, i_add set to -1 here (-1 to compensate for the two first iterations)    
-    int i_add = -1; 
-    inOrOut(dictionaryOfWords,comp_str,p_input,i_add);
-  
-    // Skip iteration in case we add a string with three or more characters
-    if (i_add > 0){
-      i = i + i_add;
+      // Skip iteration in case we add a string with three or more characters
+      if (i_add > 0){
+        i = i + i_add;
+      }
+    
     }
   
+  fileOut.close();
+  
   }
-
+  else { 
+    cout << "Error: Unable to open output file" << endl; 
+    return 0;
+  } 
 
   // delete input to free some memeory
   delete[] input; 
 
 
-  // Uncomment to print dictionary
+  // Uncomment to print dictionary 
   /*
   cout << endl << "Dictionary: " << endl << endl;
   for(auto& str : dictionaryOfWords){ cout << str << " "; }
