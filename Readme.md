@@ -35,7 +35,7 @@ Done
 	1.2: Print the output of the encoder to a file. 
 	1.3: Print the output of the decoder to a file.
 		 Runtime: encoder ~ 30 sec, decoder ~ 20 sec
-	1.9: Add hash tables for dictionary storage for the encoder.
+	1.9: Use hash tables for dictionary storage for the encoder.
 		 The key is the word and the value is the corresponding number. 
 		 Runtime: encoder ~ 0.3 sec (One order of magnitude improvement compared to earlier)
 
@@ -43,7 +43,7 @@ Done
 TODO: 	
 %%%%%%%%%%
 
-	2.0: Add hash tables for dictionary storage for the decoder. 
+	2.0: Use hash tables for dictionary storage for the decoder. 
 	2.1: Remove recursive call.
 	2.2: Do not call the output file in the function that adds dictionary entries (only for the encoder).
 	2.3: Look over how the encoder and decoder reads in the input file (different methods currently).

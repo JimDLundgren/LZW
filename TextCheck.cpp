@@ -30,7 +30,7 @@ int main (int argc, char* argv[]) {
     file.close();
   }
   else { 
-    cout << "Error: Unable to open input file"; 
+    cout << "Error: Unable to open input file" << endl; 
     return 0;
   }   
 
@@ -51,7 +51,7 @@ int main (int argc, char* argv[]) {
     file2.close();
   }
   else { 
-    cout << "Error: Unable to open input file"; 
+    cout << "Error: Unable to open input file" << endl; 
     return 0;
   }     
 
