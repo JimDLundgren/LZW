@@ -4,19 +4,17 @@
 #include <algorithm>
 #include <sstream>
 #include <fstream>
+#include <map>
 
 using namespace std;
 
 
-// Function addToDictionary adds a new dictionary input, based on the text input   
-void addToDictionary (vector<string> & vec, string str, char* ptr, int& counter, ofstream &outputFile){   
+// Function addToDictionary adds a new dictionary input, based on the text input    
+void addToDictionary (map<string, int> & wordMap, string str, char* ptr, int& counter, int& mapCounter , ofstream &outputFile){   
   
-  // checks if str is in the dictionary
-  std::vector<string>::iterator it;
-  it = find (vec.begin(), vec.end(), str);  
-  
+// Check if str is in the dictionary:
   // If str is in the dictionary:   
-  if (it != vec.end()) {  
+  if (wordMap.find(str) != wordMap.end()) {    
 
     // Increase the pointer before dereferencing it, adding the next input character to str
     str += *(++ptr);  
@@ -24,43 +22,41 @@ void addToDictionary (vector<string> & vec, string str, char* ptr, int& counter,
     // i.e. skip a few iterations in the for-loop in main
     counter++;  
     
-    // Not sure if strings actually terminate with \0, see:
-    // https://stackoverflow.com/questions/10943033/why-are-strings-in-c-usually-terminated-with-0
-    
     // If we reach the end of the string, and haven't found a new dictonary entry, output the final part
-    // NOTE: Not sure if strings actually terminate with \0, see:
+    // Note: Not sure if strings actually terminate with \0, see:
+    // https://stackoverflow.com/questions/10943033/why-are-strings-in-c-usually-terminated-with-0
     if (*ptr == '\0') { 
       str.pop_back();
-      ptrdiff_t pos = distance(vec.begin(), find(vec.begin(), vec.end(), str));
-      if(pos >= vec.size()) {
+
+      if ( wordMap.find(str) == wordMap.end() ){
         cout << "Error: Word that should be in dictionary not found" << endl;
         return;
-      }      
+      }
 
       // Output the decoded part
       //cout << pos << " "; 
-      outputFile << pos << " ";
+      outputFile << wordMap[str] << " ";
       return; 
     }
     // Check the new string to see if it is in the dictionary, recursively 
-    addToDictionary(vec, str, ptr, counter, outputFile); 
+    addToDictionary(wordMap, str, ptr, counter, mapCounter, outputFile); 
   }
   else { 
     // if str is not in the dictionary, add it
-    vec.push_back(str); 
+    wordMap[str] = mapCounter++;
     
     // Remove last element of str, this will be our decoded part (according to the LZW algorithm)
     str.pop_back(); 
 
-    // Find the position of str, i.e. its decode, and print it
-    ptrdiff_t pos = distance(vec.begin(), find(vec.begin(), vec.end(), str));
-    if(pos >= vec.size()) {
+    // Find the position of str, i.e. its decode
+    if ( wordMap.find(str) == wordMap.end() ){
       cout << "Error: Word that should be in dictionary not found" << endl;
       return;
-    }
+    }    
+    
     // Output the decoded part
     //cout << pos << " ";
-    outputFile << pos << " ";
+    outputFile << wordMap[str] << " ";    
   } 
   
 }
@@ -94,13 +90,15 @@ int main () {
 
 
   // Create the starting dictionary
-  vector<string> dictionaryOfWords;
+  map<string, int> dictionaryOfWords;
+  int dictionaryCount = 0;
 
   for(int i = 0; i < 256; i++){ 
     char temp_c = i;
     string temp(1, temp_c);
-    dictionaryOfWords.push_back(temp);
+    dictionaryOfWords[temp] = dictionaryCount++;
   }
+
 
 
   ofstream OutputFile ("InputText/EncodedText.txt");
@@ -119,7 +117,7 @@ int main () {
       // To follow the LZW algorithm we want to skip iterations in case we add a string of three or more characters. 
       // hence, i_add set to -1 here (-1 to compensate for the two first iterations)    
       int i_add = -1; 
-      addToDictionary(dictionaryOfWords, comp_str, p_input, i_add, OutputFile);
+      addToDictionary(dictionaryOfWords, comp_str, p_input, i_add, dictionaryCount, OutputFile);
     
       // Skip iteration in case we add a string with three or more characters
       if (i_add > 0){
@@ -140,12 +138,19 @@ int main () {
   delete[] input; 
 
 
+
   // Uncomment to print dictionary 
   /*
   cout << endl << "Dictionary: " << endl << endl;
-  for(auto& str : dictionaryOfWords){ cout << str << " "; }
+  for(int i = 0; i < 256; i++){ 
+    char temp_c = i;
+    string temp(1, temp_c);
+    cout << dictionaryOfWords.find(temp)->first << " ";
+  }
   cout << endl;
   */
+
+
 
   cout << endl;
   return 0;  
