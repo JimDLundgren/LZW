@@ -10,7 +10,7 @@ using namespace std;
 
 
 // Function addToDictionary adds a new dictionary input, based on the text input    
-void addToDictionary (map<string, int> & wordMap, string str, char* ptr, int& counter, int& mapCounter , ofstream &outputFile){   
+void addToDictionary (map<string, int> & wordMap, string str, char* ptr, int & counter, int & mapCounter, ofstream & outputFile){   
   
 // Check if str is in the dictionary:
   // If str is in the dictionary:   
@@ -48,12 +48,11 @@ void addToDictionary (map<string, int> & wordMap, string str, char* ptr, int& co
     // Remove last element of str, this will be our decoded part (according to the LZW algorithm)
     str.pop_back(); 
 
-    // Find the position of str, i.e. its decode
+    // Find the position of str, i.e. its decode message
     if ( wordMap.find(str) == wordMap.end() ){
       cout << "Error: Word that should be in dictionary not found" << endl;
       return;
-    }    
-    
+    }        
     // Output the decoded part
     //cout << pos << " ";
     outputFile << wordMap[str] << " ";    
@@ -101,6 +100,7 @@ int main () {
 
 
 
+  // Open output file
   ofstream OutputFile ("InputText/EncodedText.txt");
   if (OutputFile.is_open()) {
 
