@@ -4,19 +4,17 @@
 #include <algorithm>
 #include <sstream>
 #include <fstream>
+#include <map>
 
 using namespace std;
 
 
-// Function addToDictionary adds a new dictionary input, based on the encoded input  
-void addToDictionary (vector<string> & vec, string str, int* ptr, int* ptr_stop){    
+// Function addToDictionary adds a new dictionary input, based on the encoded input   
+void addToDictionary (map<string, int> & wordMap, string str, int* ptr, int* ptr_stop, int & mapCounter, map<int, string> & indexMap){        
 
-  // checks if str is in the dictionary
-  std::vector<string>::iterator it;
-  it = find (vec.begin(), vec.end(), str);
-  
+// checks if str is in the dictionary
   // If str is in the dictionary:   
-  if (it != vec.end()) { 
+  if (wordMap.find(str) != wordMap.end()) {      
 
     // Check if we are considering the last element of the coded input, 
     // if so, do no proceed further, i.e. return
@@ -31,11 +29,12 @@ void addToDictionary (vector<string> & vec, string str, int* ptr, int* ptr_stop)
     // If the next code is not in the dictionary, it is of the form str + str[0] 
     // hence add that to the dictionary
     try{
-      temp_str = vec.at((*ptr));
+      temp_str = indexMap.at((*ptr));
     }
     catch (const std::out_of_range& oor) {
       str += str[0];
-      vec.push_back(str);              
+      wordMap[str] = mapCounter;
+      indexMap[mapCounter++] = str;           
       return;
     }
     
@@ -47,21 +46,20 @@ void addToDictionary (vector<string> & vec, string str, int* ptr, int* ptr_stop)
     for(int i = 0; i < temp_str.size(); i++){ 
       str += temp_str[i];
       
-      std::vector<string>::iterator temp_it;
-      temp_it = find (vec.begin(), vec.end(), str);
-      
-      if (temp_it == vec.end()){  
-        vec.push_back(str);        
+      if ( wordMap.find(str) == wordMap.end() ){
+        wordMap[str] = mapCounter; 
+        indexMap[mapCounter++] = str;        
         return;
       }
     }
         
 
-    addToDictionary(vec, str, ptr, ptr_stop); 
+    addToDictionary (wordMap, str, ptr, ptr_stop, mapCounter, indexMap);
   }
   // If str is not in the dictionary, add str to the dictionary
   else {  
-    vec.push_back(str);
+    wordMap[str] = mapCounter;
+    indexMap[mapCounter++] = str;            
   } 
   
 }
@@ -88,21 +86,30 @@ int main () {
     return 0; 
   }
 
+
   
   // pointer to the last code, used to stop the function AddToDictionary
   int* p_lastInput = &toDecode.at(toDecode.size()-1); 
   
   
+  
   // Create the starting dictionary
-  vector<string> dictionaryOfWords;
+  // dictionaryOfWords contains the word as a key, the number as a value
+  // dictionaryOfIndex contains the number as a key, the word as a value
+  map<string, int> dictionaryOfWords;
+  map<int, string> dictionaryOfIndex;
+  int dictionaryCount = 0;
 
   for(int i = 0; i < 256; i++){ 
     char temp_c = i;
     string temp(1, temp_c);
-    dictionaryOfWords.push_back(temp);
+    dictionaryOfWords[temp] = dictionaryCount;
+    dictionaryOfIndex[dictionaryCount++] = temp;
   }
 
 
+  
+  // Open output file
   ofstream OutputFile ("InputText/DecodedText.txt");
   if (OutputFile.is_open()) {
     // Loop over the code words, and add a dictionary input for each according to
@@ -114,7 +121,7 @@ int main () {
       p_input = &toDecode.at(i);
 
       try{
-        comp_str = dictionaryOfWords.at(*p_input); 
+        comp_str = dictionaryOfIndex.at((*p_input));
       }
       catch (const std::out_of_range& oor) {
         std::cerr << "Out of Range error: " << oor.what() << '\n';
@@ -125,7 +132,7 @@ int main () {
       // able to check the next coming codes in the function
       
       // Add a new dictionary entry, constructed from the code word;
-      addToDictionary(dictionaryOfWords,comp_str,p_input,p_lastInput); //,i_add);
+      addToDictionary(dictionaryOfWords, comp_str, p_input, p_lastInput, dictionaryCount, dictionaryOfIndex); 
       
       // print the decoded message
       //cout << comp_str;
@@ -140,12 +147,20 @@ int main () {
     return 0;
   } 
 
-  // Uncomment to print dictionary
+
+
+  // Uncomment to print dictionary 
   /*
   cout << endl << "Dictionary: " << endl << endl;
-  for(auto& str : dictionaryOfWords){ cout << str << " "; }
+  for(int i = 0; i < 256; i++){ 
+    char temp_c = i;
+    string temp(1, temp_c);
+    cout << dictionaryOfWords.find(temp)->first << " ";
+  }
   cout << endl;
   */
+
+
 
   cout << endl;
   return 0;  

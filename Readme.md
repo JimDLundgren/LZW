@@ -38,12 +38,20 @@ Done
 	1.9: Use hash tables for dictionary storage for the encoder.
 		 The key is the word and the value is the corresponding number. 
 		 Runtime: encoder ~ 0.3 sec (One order of magnitude improvement compared to earlier)
+	2.0: Use hash tables for dictionary storage for the decoder. 
+		 Using two hash tables, one where the key is the word and the value is the number. 
+		 Another where the key is the number and the value is the word. 
+		 This is because as I have written the code now, I need to look up both at different occasions.
+		 This might be someting to improve in the future - only use one hash table. 
+		 Note also: It is important that to use .at() and not the operator[] when checking for elements, as the latter does not throw an out of range exception
+		 in case an element is not found - instead it adds an empty element. 
+		 Runtime: decoder ~ 0.3 sec (One order of magnitude improvement compared to earlier)
+
 
 %%%%%%%%%%
 TODO: 	
 %%%%%%%%%%
 
-	2.0: Use hash tables for dictionary storage for the decoder. 
 	2.1: Remove recursive call.
 	2.2: Do not call the output file in the function that adds dictionary entries (only for the encoder).
 	2.3: Look over how the encoder and decoder reads in the input file (different methods currently).
