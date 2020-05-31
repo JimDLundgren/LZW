@@ -1,13 +1,13 @@
 all: DecoderLZW EncoderLZW TextCheck
 
-DecoderLZW: DecoderLZW.cpp
-	cl /EHsc DecoderLZW.cpp
+DecoderLZW: src/DecoderLZW.cpp
+	cl /EHsc src/DecoderLZW.cpp
 
-EncoderLZW: EncoderLZW.cpp
-	cl /EHsc EncoderLZW.cpp
+EncoderLZW: src/EncoderLZW.cpp
+	cl /EHsc src/EncoderLZW.cpp
 
-TextCheck: TextCheck.cpp
-	cl /EHsc TextCheck.cpp
+TextCheck: src/TextCheck.cpp
+	cl /EHsc src/TextCheck.cpp
 
 clean:
 	del DecoderLZW.exe EncoderLZW.exe TextCheck.exe \
