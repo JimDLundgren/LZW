@@ -1,15 +1,14 @@
-all: DecoderLZW.ex EncoderLZW.ex TextCheck.ex
+all: DecoderLZW EncoderLZW TextCheck
 
+DecoderLZW: DecoderLZW.cpp
+	cl /EHsc DecoderLZW.cpp
 
-DecoderLZW.ex: DecoderLZW.cpp
-	g++ -std=c++11 DecoderLZW.cpp -o DecoderLZW.ex 
+EncoderLZW: EncoderLZW.cpp
+	cl /EHsc EncoderLZW.cpp
 
-EncoderLZW.ex: EncoderLZW.cpp
-	g++ -std=c++11 EncoderLZW.cpp -o EncoderLZW.ex 
-
-TextCheck.ex: TextCheck.cpp
-		g++ -std=c++11 TextCheck.cpp -o TextCheck.ex 
-
+TextCheck: TextCheck.cpp
+	cl /EHsc TextCheck.cpp
 
 clean:
-	rm -v DecoderLZW.ex EncoderLZW.ex TextCheck.ex 
+	del DecoderLZW.exe EncoderLZW.exe TextCheck.exe \
+    DecoderLZW.obj EncoderLZW.obj TextCheck.obj
