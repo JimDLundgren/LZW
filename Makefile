@@ -11,4 +11,4 @@ TextCheck: src/TextCheck.cpp
 
 clean:
 	del DecoderLZW.exe EncoderLZW.exe TextCheck.exe \
-    DecoderLZW.obj EncoderLZW.obj TextCheck.obj
+	DecoderLZW.obj EncoderLZW.obj TextCheck.obj
