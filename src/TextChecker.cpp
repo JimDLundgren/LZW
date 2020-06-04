@@ -9,38 +9,17 @@ TextChecker::TextChecker(std::string pathA, std::string pathB)
     : _pathA(pathA), _pathB(pathB)
     {}
 
-void TextChecker::checkSameText()
-{
+bool TextChecker::checkSame() {
+    auto const isLengthSame = checkSameLength();
+    auto const isTextSame = checkSameText();
 
-    ReadFile fileA(_pathA);
-    ReadFile fileB(_pathB);
-
-    std::string lineA;
-    std::string lineB;
-    while(fileA.getStream() && fileB.getStream()) {
-        std::getline(fileA.getStream(), lineA);
-        std::getline(fileB.getStream(), lineB);
-
-        if (lineA != lineB) {
-            std::cerr << "Text differ between the two files:\n"
-                      << _pathA << " : " << lineA << '\n'
-                      << _pathB << " : " << lineB << std::endl;
-
-        }
+    if (isLengthSame && isTextSame) {
+        return true;
     }
-
-    if (fileA.getStream() && !fileB.getStream()) {
-        std::cerr << _pathA << " shorter than " << _pathB << std::endl;
-    }
-
-    if (fileB.getStream() && !fileA.getStream()) {
-        std::cerr << _pathB << " shorter than " << _pathA << std::endl;
-    }
-
-    std::cout << "Texts found to be identical." << std::endl;
+    return false;
 }
 
-void TextChecker::checkSameLength()
+bool TextChecker::checkSameLength()
 {
     ReadFile fileA(_pathA);
     ReadFile fileB(_pathB);
@@ -57,7 +36,42 @@ void TextChecker::checkSameLength()
         std::cerr << "Size differ between the two files:\n"
                   << _pathA << " : " << sizeA << '\n'
                   << _pathB << " : " << sizeB << std::endl;
+        return false;
     }
 
     std::cout << "Texts found to have same length." << std::endl;
+    return true;
+}
+
+bool TextChecker::checkSameText()
+{
+    ReadFile fileA(_pathA);
+    ReadFile fileB(_pathB);
+
+    std::string lineA;
+    std::string lineB;
+    while(fileA.getStream() && fileB.getStream()) {
+        std::getline(fileA.getStream(), lineA);
+        std::getline(fileB.getStream(), lineB);
+
+        if (lineA != lineB) {
+            std::cerr << "Text differ between the two files:\n"
+                      << _pathA << " : " << lineA << '\n'
+                      << _pathB << " : " << lineB << std::endl;
+            return false;
+        }
+    }
+
+    if (fileA.getStream() && !fileB.getStream()) {
+        std::cerr << _pathA << " shorter than " << _pathB << std::endl;
+        return false;
+    }
+
+    if (fileB.getStream() && !fileA.getStream()) {
+        std::cerr << _pathB << " shorter than " << _pathA << std::endl;
+        return false;
+    }
+
+    std::cout << "Texts found to be identical." << std::endl;
+    return true;
 }

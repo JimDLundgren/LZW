@@ -1,30 +1,39 @@
 #include "TextChecker.hpp"
 
+#include <exception>
 #include <iostream>
 #include <string>
 
-// TODO: decide whether to use use exceptions or cerr + error code.
-
+// TODO: could improve cli with e.g. Boost.Program_options.
 int main (int argc, char *argv[])
 {
-    // TODO: could improve cli with e.g. Boost.Program_options.
     std::string mode(argv[1]);
-    if (mode == "encode") {
-        // TODO: call encoder
-    } else if (mode == "decode") {
-        // TODO: call decoder
-    } else if (mode == "check") {
-        if (argc != 4) {
-            std::cerr << "Need two files as input to compare" << std::endl;
+
+    try {
+        if (mode == "encode") {
+            // TODO: call encoder
+        } else if (mode == "decode") {
+            // TODO: call decoder
+        } else if (mode == "check") {
+            if (argc != 4) {
+                std::cerr << "Need two files as input to compare" << std::endl;
+                return -1;
+            }
+
+            TextChecker tc(argv[2], argv[3]);
+            auto const isSame(tc.checkSame());
+
+            if (!isSame) {
+                return -1;
+            }
+        } else {
+            std::cerr << "Expected one of the following inputs: "
+                    << "encode, decode, or check." << std::endl;
             return -1;
         }
-        TextChecker tc("InputText\\OriginalText.txt", "InputText\\DecodedText.txt");
-        tc.checkSameLength();
-        tc.checkSameText();
-    } else {
-        std::cerr << "Expected one of the following first input: "
-                  << "encode, decode, or check." << std::endl;
-        return -1;
+    } catch(std::exception const& ex) {
+        std::cerr << "Caught exception with message:\n"
+                  << ex.what() << std::endl;
     }
 
     return 0;
