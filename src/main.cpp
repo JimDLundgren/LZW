@@ -12,12 +12,16 @@ int main (int argc, char *argv[])
     try {
         if (mode == "encode")
         {
+            if (argc != 3) {
+                std::cerr << "Need one file as input to encode" << std::endl;
+                return -1;
+            }
             // TODO: call encoder
         }
         else if (mode == "decode")
         {
             if (argc != 3) {
-                std::cerr << "Need two files as input to compare" << std::endl;
+                std::cerr << "Need one (.ENC) file as input to decode" << std::endl;
                 return -1;
             }
             lzw::Decoder dc;
@@ -32,15 +36,11 @@ int main (int argc, char *argv[])
 
             lzw::TextChecker tc(argv[2], argv[3]);
             auto const isSame(tc.checkSame());
-
-            if (!isSame) {
-                return -1;
-            }
         }
         else
         {
             std::cerr << "Expected one of the following inputs: "
-                    << "encode, decode, or check." << std::endl;
+                      << "encode, decode, or check." << std::endl;
             return -1;
         }
     }
@@ -48,6 +48,7 @@ int main (int argc, char *argv[])
     {
         std::cerr << "Caught exception with message:\n"
                   << ex.what() << std::endl;
+        return -1;
     }
 
     return 0;

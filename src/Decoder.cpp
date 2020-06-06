@@ -110,7 +110,9 @@ int Decoder::run(std::string inFile)
     dictionaryOfIndex[dictionaryCount++] = temp;
   }
 
-  // Prepare output file
+  // The output file is a .txt file with the same name as the input
+  // file. If it already exists, append the current time (since epoch)
+  // to its name.
   fs::path outFilePath = inFilePath.parent_path();
   outFilePath /= inFilePath.stem();
   outFilePath += ".txt";
