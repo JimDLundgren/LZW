@@ -7,6 +7,7 @@
 #include <iostream>
 #include <map>
 #include <sstream>
+#include <stdexcept>
 #include <string>
 #include <vector>
 
@@ -75,9 +76,8 @@ int Decoder::run(std::string inFile)
   fs::path inFilePath(inFile);
 
   if (inFilePath.extension() != ".ENC") {
-    std::cerr << "Incorrect file type. Need .ENC extension, but was: "
-              << inFilePath.string() << std::endl;
-    return -1;
+    throw std::runtime_error((std::string("Incorrect file type. ")
+            + "Need .ENC extension, but was: " + inFilePath.string()));
   }
 
   int data;
@@ -85,8 +85,7 @@ int Decoder::run(std::string inFile)
 
   std::ifstream inFileIfs(inFilePath);
   if (!inFileIfs.is_open()) {
-    std::cout << "Error: Unable to open input file" << std::endl;
-    return -1;
+    throw std::runtime_error(("Unable to open inFile: " + inFilePath.string()));
   }
 
   while (inFileIfs >> data) {
@@ -128,8 +127,7 @@ int Decoder::run(std::string inFile)
 
   std::ofstream outFileOfs(outFilePath);
   if (!outFileOfs.is_open()) {
-    std::cout << "Error: Unable to open output file" << std::endl;
-    return -1;
+    throw std::runtime_error(("Unable to open outFile: " + inFilePath.string()));
   }
 
   std::cout << "Decoding file: " << inFilePath
