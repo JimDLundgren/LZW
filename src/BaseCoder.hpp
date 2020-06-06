@@ -2,10 +2,12 @@
 #include <string>
 #include <iostream>
 
+namespace lzw {
+
 class BaseCoder
 {
 public:
-    virtual int run() = 0;
+    virtual int run(std::string inFile) = 0;
 
     // TODO: Store starting dictonary in a member variable and
     // print that. This print also just checks that the starting
@@ -21,3 +23,5 @@ public:
         std::cout << std::endl;
     }
 };
+
+} //lzw

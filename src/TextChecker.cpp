@@ -5,6 +5,8 @@
 #include <iostream>
 #include <stdexcept>
 
+namespace lzw {
+
 TextChecker::TextChecker(std::string pathA, std::string pathB)
     : _pathA(pathA), _pathB(pathB)
     {}
@@ -75,3 +77,5 @@ bool TextChecker::checkSameText()
     std::cout << "Texts found to be identical." << std::endl;
     return true;
 }
+
+} // lzw

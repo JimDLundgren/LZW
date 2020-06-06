@@ -1,12 +1,15 @@
 #include "Decoder.hpp"
 
 #include <algorithm>
+#include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <map>
 #include <sstream>
 #include <string>
 #include <vector>
+
+namespace fs = std::filesystem;
 
 namespace {
 
@@ -63,24 +66,31 @@ void addToDictionary (std::map<std::string, int>& wordMap, std::string str, int*
 
 } // namespace
 
-int Decoder::run()
+namespace lzw {
+
+int Decoder::run(std::string inFile)
 {
-  // Read in text to decode
-  std::string fileName = "InputText/EncodedText.txt";
+  fs::path inFilePath(inFile);
+
+  if (inFilePath.extension() != ".ENC") {
+    std::cerr << "Incorrect file type, need .ENC extension but was: "
+              << inFilePath.string() << std::endl;
+    return -1;
+  }
 
   int data;
   std::vector<int> toDecode;
 
-  std::ifstream inputFile( fileName.c_str() );
-  if ( inputFile.is_open() ) {
-       while (inputFile >> data) {
-           toDecode.push_back(data);
-       }
-    inputFile.close();
+  std::ifstream inFileIfs(inFilePath);
+  if ( inFileIfs.is_open() ) {
+    while (inFileIfs >> data) {
+      toDecode.push_back(data);
+    }
+    inFileIfs.close();
   }
   else {
     std::cout << "Error: Unable to open input file" << std::endl;
-    return 0;
+    return -1;
   }
 
   // pointer to the last code, used to stop the function AddToDictionary
@@ -101,8 +111,10 @@ int Decoder::run()
   }
 
   // Open output file
-  std::ofstream OutputFile ("InputText/DecodedText.txt");
-  if (OutputFile.is_open()) {
+  fs::path outFilePath = inFilePath.parent_path();
+  outFilePath /= inFilePath.stem();
+  std::ofstream outFileOfs(outFilePath);
+  if (outFileOfs.is_open()) {
     // Loop over the code words, and add a dictionary input for each according to
     // the LZW rules
     for(int i = 0; i < toDecode.size(); i++){
@@ -124,16 +136,18 @@ int Decoder::run()
       // Add a new dictionary entry, constructed from the code word;
       addToDictionary(dictionaryOfWords, comp_str, p_input, p_lastInput, dictionaryCount, dictionaryOfIndex);
 
-      OutputFile << comp_str;
+      outFileOfs << comp_str;
     }
 
-    OutputFile.close();
+    outFileOfs.close();
   }
   else {
     std::cout << "Error: Unable to open output file" << std::endl;
-    return 0;
+    return -1;
   }
 
   std::cout << std::endl;
   return 0;
 }
+
+} // lzw

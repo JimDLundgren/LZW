@@ -16,9 +16,12 @@ int main (int argc, char *argv[])
         }
         else if (mode == "decode")
         {
-            // TODO: Input check and pass file to decoder.
-            Decoder dc;
-            dc.run();
+            if (argc != 3) {
+                std::cerr << "Need two files as input to compare" << std::endl;
+                return -1;
+            }
+            lzw::Decoder dc;
+            dc.run(argv[2]);
         }
         else if (mode == "check")
         {
@@ -27,7 +30,7 @@ int main (int argc, char *argv[])
                 return -1;
             }
 
-            TextChecker tc(argv[2], argv[3]);
+            lzw::TextChecker tc(argv[2], argv[3]);
             auto const isSame(tc.checkSame());
 
             if (!isSame) {

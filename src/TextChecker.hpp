@@ -1,5 +1,7 @@
 #include <string>
 
+namespace lzw {
+
 class TextChecker {
     std::string _pathA;
     std::string _pathB;
@@ -12,3 +14,5 @@ private:
     bool checkSameLength();
     bool checkSameText();
 };
+
+} // lzw
