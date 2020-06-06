@@ -1,4 +1,3 @@
-#include "ReadFile.hpp"
 #include "TextChecker.hpp"
 
 #include <fstream>
@@ -23,19 +22,26 @@ bool TextChecker::checkSame() {
 
 bool TextChecker::checkSameLength()
 {
-    ReadFile fileA(_pathA);
-    ReadFile fileB(_pathB);
+    std::ifstream fileA(_pathA);
+    if (!(fileA.is_open())) {
+        throw std::runtime_error(("Unable to open file: " + _pathA));
+    }
 
-    fileA.getStream().seekg (0, std::ios::beg);
-    std::streampos sizeA = fileA.getStream().tellg();
-    fileA.getStream().seekg (0, std::ios::beg);
+    std::ifstream fileB(_pathB);
+    if (!(fileB.is_open())) {
+        throw std::runtime_error(("Unable to open file: " + _pathB));
+    }
 
-    fileB.getStream().seekg (0, std::ios::beg);
-    std::streampos sizeB = fileB.getStream().tellg();
-    fileB.getStream().seekg (0, std::ios::beg);
+    fileA.seekg (0, std::ios::beg);
+    std::streampos sizeA = fileA.tellg();
+    fileA.seekg (0, std::ios::beg);
+
+    fileB.seekg (0, std::ios::beg);
+    std::streampos sizeB = fileB.tellg();
+    fileB.seekg (0, std::ios::beg);
 
     if (sizeA != sizeB) {
-        std::cerr << "Size differ between the two files:\n"
+        std::cout << "Size differ between the two files:\n"
                   << _pathA << " : " << sizeA << '\n'
                   << _pathB << " : " << sizeB << std::endl;
         return false;
@@ -47,30 +53,37 @@ bool TextChecker::checkSameLength()
 
 bool TextChecker::checkSameText()
 {
-    ReadFile fileA(_pathA);
-    ReadFile fileB(_pathB);
+    std::ifstream fileA(_pathA);
+    if (!(fileA.is_open())) {
+        throw std::runtime_error(("Unable to open file: " + _pathA));
+    }
+
+    std::ifstream fileB(_pathB);
+    if (!(fileB.is_open())) {
+        throw std::runtime_error(("Unable to open file: " + _pathB));
+    }
 
     std::string lineA;
     std::string lineB;
-    while(fileA.getStream() && fileB.getStream()) {
-        std::getline(fileA.getStream(), lineA);
-        std::getline(fileB.getStream(), lineB);
+    while(fileA && fileB) {
+        std::getline(fileA, lineA);
+        std::getline(fileB, lineB);
 
         if (lineA != lineB) {
-            std::cerr << "Text differ between the two files:\n"
+            std::cout << "Text differ between the two files:\n"
                       << _pathA << " : " << lineA << '\n'
                       << _pathB << " : " << lineB << std::endl;
             return false;
         }
     }
 
-    if (fileA.getStream() && !fileB.getStream()) {
-        std::cerr << _pathA << " shorter than " << _pathB << std::endl;
+    if (fileA && !fileB) {
+        std::cout << _pathA << " shorter than " << _pathB << std::endl;
         return false;
     }
 
-    if (fileB.getStream() && !fileA.getStream()) {
-        std::cerr << _pathB << " shorter than " << _pathA << std::endl;
+    if (fileB && !fileA) {
+        std::cout << _pathB << " shorter than " << _pathA << std::endl;
         return false;
     }
 
