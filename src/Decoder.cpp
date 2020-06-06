@@ -1,6 +1,7 @@
 #include "Decoder.hpp"
 
 #include <algorithm>
+#include <chrono>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
@@ -14,7 +15,8 @@ namespace fs = std::filesystem;
 namespace {
 
 // Function addToDictionary adds a new dictionary input, based on the encoded input
-void addToDictionary (std::map<std::string, int>& wordMap, std::string str, int* ptr, int* ptr_stop, int& mapCounter, std::map<int, std::string>& indexMap){
+void addToDictionary(std::map<std::string, int>& wordMap, std::string str, int* ptr,
+                     int* ptr_stop, int& mapCounter, std::map<int, std::string>& indexMap){
   // checks if str is in the dictionary
   if (wordMap.find(str) != wordMap.end()) {
     // If str is in the dictionary:
@@ -73,7 +75,7 @@ int Decoder::run(std::string inFile)
   fs::path inFilePath(inFile);
 
   if (inFilePath.extension() != ".ENC") {
-    std::cerr << "Incorrect file type, need .ENC extension but was: "
+    std::cerr << "Incorrect file type. Need .ENC extension, but was: "
               << inFilePath.string() << std::endl;
     return -1;
   }
@@ -82,16 +84,15 @@ int Decoder::run(std::string inFile)
   std::vector<int> toDecode;
 
   std::ifstream inFileIfs(inFilePath);
-  if ( inFileIfs.is_open() ) {
-    while (inFileIfs >> data) {
-      toDecode.push_back(data);
-    }
-    inFileIfs.close();
-  }
-  else {
+  if (!inFileIfs.is_open()) {
     std::cout << "Error: Unable to open input file" << std::endl;
     return -1;
   }
+
+  while (inFileIfs >> data) {
+    toDecode.push_back(data);
+  }
+  inFileIfs.close();
 
   // pointer to the last code, used to stop the function AddToDictionary
   int* p_lastInput = &toDecode.at(toDecode.size()-1);
@@ -110,43 +111,55 @@ int Decoder::run(std::string inFile)
     dictionaryOfIndex[dictionaryCount++] = temp;
   }
 
-  // Open output file
+  // Prepare output file
   fs::path outFilePath = inFilePath.parent_path();
   outFilePath /= inFilePath.stem();
-  std::ofstream outFileOfs(outFilePath);
-  if (outFileOfs.is_open()) {
-    // Loop over the code words, and add a dictionary input for each according to
-    // the LZW rules
-    for(int i = 0; i < toDecode.size(); i++){
-      // comp_str holds the decode
-      // p_input points to the current code word, passed to addToDictionary to be
-      // able to check the next coming codes in the function
-      int* p_input;
-      std::string comp_str;
-
-      p_input = &toDecode.at(i);
-
-      try{
-        comp_str = dictionaryOfIndex.at((*p_input));
-      }
-      catch (const std::out_of_range& oor) {
-        std::cerr << "Out of Range error: " << oor.what() << '\n';
-      }
-
-      // Add a new dictionary entry, constructed from the code word;
-      addToDictionary(dictionaryOfWords, comp_str, p_input, p_lastInput, dictionaryCount, dictionaryOfIndex);
-
-      outFileOfs << comp_str;
-    }
-
-    outFileOfs.close();
+  outFilePath += ".txt";
+  if (fs::exists(outFilePath)) {
+    auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(
+      std::chrono::system_clock::now().time_since_epoch()
+    );
+    auto count = ms.count();
+    outFilePath = inFilePath.parent_path();
+    outFilePath /= inFilePath.stem();
+    outFilePath += ("_" + std::to_string(count));
+    outFilePath += ".txt";
   }
-  else {
+
+  std::ofstream outFileOfs(outFilePath);
+  if (!outFileOfs.is_open()) {
     std::cout << "Error: Unable to open output file" << std::endl;
     return -1;
   }
 
-  std::cout << std::endl;
+  std::cout << "Decoding file: " << inFilePath
+            << " to file: " << outFilePath << std::endl;
+
+  // Loop over the code words, and add a dictionary input for each
+  // according to the LZW rules
+  for(int i = 0; i < toDecode.size(); i++){
+    // comp_str holds the decode
+    // p_input points to the current code word, passed to addToDictionary to be
+    // able to check the next coming codes in the function
+    int* p_input;
+    std::string comp_str;
+
+    p_input = &toDecode.at(i);
+
+    try{
+      comp_str = dictionaryOfIndex.at((*p_input));
+    }
+    catch (const std::out_of_range& oor) {
+      std::cerr << "Out of Range error: " << oor.what() << '\n';
+    }
+
+    // Add a new dictionary entry, constructed from the code word;
+    addToDictionary(dictionaryOfWords, comp_str, p_input,
+                    p_lastInput, dictionaryCount, dictionaryOfIndex);
+
+    outFileOfs << comp_str;
+  }
+
   return 0;
 }
 
