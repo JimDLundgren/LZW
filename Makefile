@@ -1,14 +1,14 @@
-all: DecoderLZW EncoderLZW main
+all: Decoder Encoder main
 
-DecoderLZW: src/DecoderLZW.cpp
-	cl /EHsc src/DecoderLZW.cpp
+Decoder: src/Decoder.cpp
+	cl /EHsc src/Decoder.cpp
 
-EncoderLZW: src/EncoderLZW.cpp
-	cl /EHsc src/EncoderLZW.cpp
+Encoder: src/Encoder.cpp
+	cl /EHsc src/Encoder.cpp
 
 main: src/main.cpp
 	cl /EHsc src/main.cpp src/TextChecker.cpp src/ReadFile.cpp
 
 clean:
-	del DecoderLZW.exe EncoderLZW.exe main.exe \
-	DecoderLZW.obj EncoderLZW.obj main.obj
+	del Decoder.exe Encoder.exe main.exe \
+	Decoder.obj Encoder.obj main.obj
