@@ -1,3 +1,4 @@
+#include "Decoder.hpp"
 #include "TextChecker.hpp"
 
 #include <exception>
@@ -15,7 +16,9 @@ int main (int argc, char *argv[])
         }
         else if (mode == "decode")
         {
-            // TODO: call decoder
+            // TODO: Input check and pass file to decoder.
+            Decoder dc;
+            dc.run();
         }
         else if (mode == "check")
         {

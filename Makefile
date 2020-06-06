@@ -1,14 +1,11 @@
-all: Decoder Encoder main
-
-Decoder: src/Decoder.cpp
-	cl /EHsc src/Decoder.cpp
+all: Encoder main
 
 Encoder: src/Encoder.cpp
 	cl /EHsc src/Encoder.cpp
 
 main: src/main.cpp
-	cl /EHsc src/main.cpp src/TextChecker.cpp src/ReadFile.cpp
+	cl /EHsc src/main.cpp src/Decoder.cpp src/TextChecker.cpp src/ReadFile.cpp
 
 clean:
-	del Decoder.exe Encoder.exe main.exe \
-	Decoder.obj Encoder.obj main.obj
+	del Encoder.exe main.exe \
+	Encoder.obj main.obj
