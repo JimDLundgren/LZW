@@ -93,23 +93,6 @@ int Decoder::run(std::string inFile)
   }
   inFileIfs.close();
 
-  // pointer to the last code, used to stop the function AddToDictionary
-  int* p_lastInput = &toDecode.at(toDecode.size()-1);
-
-  // Create the starting dictionary
-  // dictionaryOfWords contains the word as a key, the number as a value
-  // dictionaryOfIndex contains the number as a key, the word as a value
-  std::map<std::string, int> dictionaryOfWords;
-  std::map<int, std::string> dictionaryOfIndex;
-  int dictionaryCount = 0;
-
-  for(int i = 0; i < 256; i++){
-    char temp_c = i;
-    std::string temp(1, temp_c);
-    dictionaryOfWords[temp] = dictionaryCount;
-    dictionaryOfIndex[dictionaryCount++] = temp;
-  }
-
   // The output file is a .txt file with the same name as the input
   // file. If it already exists, append the current time (since epoch)
   // to its name.
@@ -134,6 +117,23 @@ int Decoder::run(std::string inFile)
 
   std::cout << "Decoding file: " << inFilePath
             << " to file: " << outFilePath << std::endl;
+
+  // pointer to the last code, used to stop the function addToDictionary
+  int* p_lastInput = &toDecode.at(toDecode.size()-1);
+
+  // Create the starting dictionary
+  // dictionaryOfWords contains the word as a key, the number as a value
+  // dictionaryOfIndex contains the number as a key, the word as a value
+  std::map<std::string, int> dictionaryOfWords;
+  std::map<int, std::string> dictionaryOfIndex;
+  int dictionaryCount = 0;
+
+  for(int i = 0; i < 256; i++){
+    char temp_c = i;
+    std::string temp(1, temp_c);
+    dictionaryOfWords[temp] = dictionaryCount;
+    dictionaryOfIndex[dictionaryCount++] = temp;
+  }
 
   // Loop over the code words, and add a dictionary input for each
   // according to the LZW rules
