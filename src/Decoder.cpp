@@ -1,7 +1,6 @@
 #include "Decoder.hpp"
 
 #include <algorithm>
-#include <chrono>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
@@ -91,22 +90,8 @@ int Decoder::run(std::string inFile)
   }
   inFileIfs.close();
 
-  // The output file is a .txt file with the same name as the input
-  // file. If it already exists, append the current time (since epoch)
-  // to its name.
-  fs::path outFilePath = inFilePath.parent_path();
-  outFilePath /= inFilePath.stem();
-  outFilePath += ".txt";
-  if (fs::exists(outFilePath)) {
-    auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(
-      std::chrono::system_clock::now().time_since_epoch()
-    );
-    auto count = ms.count();
-    outFilePath = inFilePath.parent_path();
-    outFilePath /= inFilePath.stem();
-    outFilePath += ("_" + std::to_string(count));
-    outFilePath += ".txt";
-  }
+  // The output file is a .txt file with the same name as the input file.
+  auto outFilePath(createOutFilePathBasedOnInFile(inFilePath, ".txt"));
 
   std::ofstream outFileOfs(outFilePath);
   if (!outFileOfs.is_open()) {

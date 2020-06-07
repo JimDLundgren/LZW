@@ -1,7 +1,6 @@
 #include "Encoder.hpp"
 
 #include <algorithm>
-#include <chrono>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
@@ -98,22 +97,8 @@ int Encoder::run(std::string inFile) {
     dictionaryOfWords[temp] = dictionaryCount++;
   }
 
-  // The output file is a .ENC file with the same name as the input
-  // file. If it already exists, append the current time (since epoch)
-  // to its name.
-  fs::path outFilePath = inFilePath.parent_path();
-  outFilePath /= inFilePath.stem();
-  outFilePath += ".ENC";
-  if (fs::exists(outFilePath)) {
-    auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(
-      std::chrono::system_clock::now().time_since_epoch()
-    );
-    auto count = ms.count();
-    outFilePath = inFilePath.parent_path();
-    outFilePath /= inFilePath.stem();
-    outFilePath += ("_" + std::to_string(count));
-    outFilePath += ".ENC";
-  }
+  // The output file is a .ENC file with the same name as the input file.
+  auto outFilePath(createOutFilePathBasedOnInFile(inFilePath, ".ENC"));
 
   std::ofstream outFileOfs(outFilePath);
   if (!outFileOfs.is_open()) {
