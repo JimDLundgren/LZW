@@ -1,4 +1,5 @@
 #include "Decoder.hpp"
+#include "Encoder.hpp"
 #include "TextChecker.hpp"
 
 #include <exception>
@@ -16,7 +17,8 @@ int main (int argc, char *argv[])
                 std::cerr << "Need one file as input to encode" << std::endl;
                 return -1;
             }
-            // TODO: call encoder
+            lzw::Encoder enc;
+            enc.run(argv[2]);
         }
         else if (mode == "decode")
         {
@@ -24,8 +26,8 @@ int main (int argc, char *argv[])
                 std::cerr << "Need one (.ENC) file as input to decode" << std::endl;
                 return -1;
             }
-            lzw::Decoder dc;
-            dc.run(argv[2]);
+            lzw::Decoder dec;
+            dec.run(argv[2]);
         }
         else if (mode == "check")
         {

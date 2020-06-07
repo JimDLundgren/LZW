@@ -4,7 +4,7 @@
 
 namespace lzw {
 
-class Decoder : public BaseCoder {
+class Encoder : public BaseCoder {
 public:
     int run(std::string inFile) override;
 };
