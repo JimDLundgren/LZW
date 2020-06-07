@@ -48,7 +48,7 @@ int main()
 {
     TestDirRAII testDir;
 
-    std::string origFile(testDir.string() + "\\OriginalText");
+    std::string origFile(testDir.string() + "\\OriginalText.txt");
     std::ofstream origFileOfs(origFile);
     if (!origFileOfs.is_open()) {
         throw std::runtime_error(("Unable to open file: " + origFile));
@@ -65,7 +65,7 @@ int main()
     lzw::Encoder enc;
     enc.run(origFile, encFile);
 
-    std::string decFile(testDir.string() + "\\DecodedText");
+    std::string decFile(testDir.string() + "\\DecodedText.txt");
     lzw::Decoder dec;
     dec.run(encFile, decFile);
 
