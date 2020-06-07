@@ -1,8 +1,10 @@
 # Compiled source #
 ###################
-*.exe
 *.ex
+*.exe
+*.obj
 
 # Data #
 ###################
+*.ENC
 *.txt

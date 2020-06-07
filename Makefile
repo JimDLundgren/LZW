@@ -1,15 +1,13 @@
-all: DecoderLZW.ex EncoderLZW.ex TextCheck.ex
+all: main
 
+main: src/main.cpp
+	cl /EHsc /std:c++17 src/main.cpp src/BaseCoder.cpp src/Decoder.cpp src/Encoder.cpp src/TextChecker.cpp
 
-DecoderLZW.ex: DecoderLZW.cpp
-	g++ -std=c++11 DecoderLZW.cpp -o DecoderLZW.ex 
-
-EncoderLZW.ex: EncoderLZW.cpp
-	g++ -std=c++11 EncoderLZW.cpp -o EncoderLZW.ex 
-
-TextCheck.ex: TextCheck.cpp
-		g++ -std=c++11 TextCheck.cpp -o TextCheck.ex 
-
+test: test/test.cpp
+	cl /EHsc /I src /std:c++17 test\test.cpp src\BaseCoder.cpp src\Decoder.cpp src\Encoder.cpp src\TextChecker.cpp
 
 clean:
-	rm -v DecoderLZW.ex EncoderLZW.ex TextCheck.ex 
+	del main.exe main.obj BaseCoder.obj Decoder.obj Encoder.obj TextChecker.obj
+
+cleanTest:
+	del test.exe test.obj BaseCoder.obj Decoder.obj Encoder.obj TextChecker.obj
