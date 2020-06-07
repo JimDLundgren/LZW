@@ -68,7 +68,7 @@ void addToDictionary(std::map<std::string, int>& wordMap, std::string str, int* 
 
 namespace lzw {
 
-int Decoder::run(std::string inFile)
+int Decoder::run(std::string inFile, std::string outFile)
 {
   fs::path inFilePath(inFile);
 
@@ -90,8 +90,13 @@ int Decoder::run(std::string inFile)
   }
   inFileIfs.close();
 
-  // The output file is a .txt file with the same name as the input file.
-  auto outFilePath(createOutFilePathBasedOnInFile(inFilePath, ".txt"));
+  fs::path outFilePath;
+  if(outFile.empty() || (outFile == "")) {
+    // The output file is a .txt file with the same name as the input file.
+    outFilePath = createOutFilePathBasedOnInFile(inFilePath, ".txt");
+  } else {
+    outFilePath = outFile;
+  }
 
   std::ofstream outFileOfs(outFilePath);
   if (!outFileOfs.is_open()) {

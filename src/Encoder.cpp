@@ -64,14 +64,21 @@ void addToDictionary(std::map<std::string, int>& wordMap, std::string str, char*
 
 namespace lzw {
 
-int Encoder::run(std::string inFile) {
+int Encoder::run(std::string inFile, std::string outFile) {
   fs::path inFilePath(inFile);
+  fs::path outFilePath(outFile);
 
   if (inFilePath.extension() == ".ENC") {
     throw std::runtime_error(std::string("File: ") + inFilePath.string()
                              + " is already encoded (has extension .ENC)");
   }
 
+  if(!(outFile.empty() || (outFile == ""))) {
+    if (outFilePath.extension() != ".ENC") {
+      throw std::runtime_error(std::string("Output file needs .ENC extension, but was: ")
+                              + outFilePath.string());
+    }
+  }
 
   std::ifstream inFileIfs (inFilePath, std::ios::in | std::ios::binary
                                                     | std::ios::ate);
@@ -97,8 +104,12 @@ int Encoder::run(std::string inFile) {
     dictionaryOfWords[temp] = dictionaryCount++;
   }
 
-  // The output file is a .ENC file with the same name as the input file.
-  auto outFilePath(createOutFilePathBasedOnInFile(inFilePath, ".ENC"));
+  if(outFile.empty() || (outFile == "")) {
+    // The output file is a .ENC file with the same name as the input file.
+    outFilePath = createOutFilePathBasedOnInFile(inFilePath, ".ENC");
+  } else {
+    outFilePath = outFile;
+  }
 
   std::ofstream outFileOfs(outFilePath);
   if (!outFileOfs.is_open()) {

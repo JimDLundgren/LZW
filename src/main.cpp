@@ -13,21 +13,31 @@ int main (int argc, char *argv[])
     try {
         if (mode == "encode")
         {
-            if (argc != 3) {
-                std::cerr << "Need one file as input to encode" << std::endl;
+            if (argc == 3) {
+                lzw::Encoder enc;
+                enc.run(argv[2], "");
+            } else if (argc == 4) {
+                lzw::Encoder enc;
+                enc.run(argv[2], argv[3]);
+            } else {
+                std::cerr << "Incorrect input: One file to encode required, "
+                          << "one .ENC output file optional." << std::endl;
                 return -1;
             }
-            lzw::Encoder enc;
-            enc.run(argv[2]);
         }
         else if (mode == "decode")
         {
-            if (argc != 3) {
-                std::cerr << "Need one (.ENC) file as input to decode" << std::endl;
+            if (argc == 3) {
+                lzw::Decoder dec;
+                dec.run(argv[2], "");
+            } else if (argc == 4) {
+                lzw::Decoder dec;
+                dec.run(argv[2], argv[3]);
+            } else {
+                std::cerr << "Incorrect input: One .ENC file to decode required, "
+                          << "one output file optional." << std::endl;
                 return -1;
             }
-            lzw::Decoder dec;
-            dec.run(argv[2]);
         }
         else if (mode == "check")
         {
