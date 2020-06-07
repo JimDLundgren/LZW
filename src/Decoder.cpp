@@ -15,24 +15,21 @@ namespace fs = std::filesystem;
 
 namespace {
 
-// Function addToDictionary adds a new dictionary input, based on the encoded input
 void addToDictionary(std::map<std::string, int>& wordMap, std::string str, int* ptr,
                      int* ptr_stop, int& mapCounter, std::map<int, std::string>& indexMap){
-  // checks if str is in the dictionary
   if (wordMap.find(str) != wordMap.end()) {
-    // If str is in the dictionary:
-    // Check if we are considering the last element of the coded input,
-    // if so, do no proceed further, i.e. return
+    // If str is in the dictionary, check if we are considering the last element
+    // of the coded input, if so we're done.
     if (ptr == ptr_stop) {
       return;
     }
 
-    // We consider the next code in the input list
+    // Consider the next code in the input list.
     ptr++;
     std::string temp_str;
 
-    // If the next code is not in the dictionary, it is of the form str + str[0]
-    // hence add that to the dictionary
+    // If the code is not in the dictionary, it is of the form str + str[0],
+    // hence add it to the dictionary.
     try{
       temp_str = indexMap.at((*ptr));
     }
@@ -45,9 +42,9 @@ void addToDictionary(std::map<std::string, int>& wordMap, std::string str, int* 
 
     // In case the next code is in the dictionary, check if str added with the
     // first character of the next code, temp_str[0] is in the dictionary.
-    // If not, add str + temp_str[0] to the dictionary.
-    // If it is, keep extending str + temp_str[0] with temp_str[1] , check if
-    // it is in the dictionary and so on.
+    // If not, add str + temp_str[0] to the dictionary. If it is, keep
+    // extending str + temp_str[0] with temp_str[1] , check if it is in the
+    // dictionary and so on.
     for(int i = 0; i < temp_str.size(); i++){
       str += temp_str[i];
 
@@ -61,7 +58,7 @@ void addToDictionary(std::map<std::string, int>& wordMap, std::string str, int* 
     addToDictionary (wordMap, str, ptr, ptr_stop, mapCounter, indexMap);
   }
   else {
-    // If str is not in the dictionary, add str to the dictionary
+    // If str is not in the dictionary, add it to the dictionary.
     wordMap[str] = mapCounter;
     indexMap[mapCounter++] = str;
   }
@@ -118,12 +115,13 @@ int Decoder::run(std::string inFile)
   std::cout << "Decoding file: " << inFilePath
             << " to file: " << outFilePath << std::endl;
 
-  // pointer to the last code, used to stop the function addToDictionary
+  // pointer to the last code, used to stop addToDictionary.
   int* p_lastInput = &toDecode.at(toDecode.size()-1);
 
-  // Create the starting dictionary
-  // dictionaryOfWords contains the word as a key, the number as a value
-  // dictionaryOfIndex contains the number as a key, the word as a value
+  // Create the starting dictionary. We need two copies for the current
+  // way we do the algorithm:
+  // - dictionaryOfWords contains the words as keys, the numbers as values.
+  // - dictionaryOfIndex contains the numbers as keys, the word as values.
   std::map<std::string, int> dictionaryOfWords;
   std::map<int, std::string> dictionaryOfIndex;
   int dictionaryCount = 0;
@@ -135,14 +133,13 @@ int Decoder::run(std::string inFile)
     dictionaryOfIndex[dictionaryCount++] = temp;
   }
 
-  // Loop over the code words, and add a dictionary input for each
-  // according to the LZW rules
+  // Loop over the code words, and add to the dictionary
+  // according to the LZW rules.
   for(int i = 0; i < toDecode.size(); i++){
-    // comp_str holds the decode
     // p_input points to the current code word, passed to addToDictionary to be
-    // able to check the next coming codes in the function
+    // able to check the next coming codes in the function.
     int* p_input;
-    std::string comp_str;
+    std::string comp_str; // comp_str holds the decoded code (i.e. the word).
 
     p_input = &toDecode.at(i);
 
@@ -153,7 +150,6 @@ int Decoder::run(std::string inFile)
       std::cerr << "Out of Range error: " << oor.what() << '\n';
     }
 
-    // Add a new dictionary entry, constructed from the code word;
     addToDictionary(dictionaryOfWords, comp_str, p_input,
                     p_lastInput, dictionaryCount, dictionaryOfIndex);
 
