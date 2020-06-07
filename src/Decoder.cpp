@@ -16,7 +16,8 @@ namespace fs = std::filesystem;
 namespace {
 
 void addToDictionary(std::map<std::string, int>& wordMap, std::string str, int* ptr,
-                     int* ptr_stop, int& mapCounter, std::map<int, std::string>& indexMap){
+                     int* ptr_stop, int& mapCounter, std::map<int, std::string>& indexMap)
+{
   if (wordMap.find(str) != wordMap.end()) {
     // If str is in the dictionary, check if we are considering the last element
     // of the coded input, if so we're done.
@@ -109,7 +110,7 @@ int Decoder::run(std::string inFile)
 
   std::ofstream outFileOfs(outFilePath);
   if (!outFileOfs.is_open()) {
-    throw std::runtime_error(("Unable to open outFile: " + inFilePath.string()));
+    throw std::runtime_error(("Unable to open outFile: " + outFilePath.string()));
   }
 
   std::cout << "Decoding file: " << inFilePath
