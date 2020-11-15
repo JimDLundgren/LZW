@@ -83,7 +83,7 @@ int Encoder::run(std::string inFile, std::string outFile) {
   std::ifstream inFileIfs (inFilePath, std::ios::in | std::ios::binary
                                                     | std::ios::ate);
   if (!inFileIfs.is_open()) {
-    throw std::runtime_error(("Unable to open inFile: " + inFilePath.string()));
+    throw std::runtime_error("Unable to open inFile: " + inFilePath.string());
   }
 
   std::streampos inputSize = inFileIfs.tellg();
@@ -113,7 +113,7 @@ int Encoder::run(std::string inFile, std::string outFile) {
 
   std::ofstream outFileOfs(outFilePath);
   if (!outFileOfs.is_open()) {
-    throw std::runtime_error(("Unable to open outFile: " + outFilePath.string()));
+    throw std::runtime_error("Unable to open outFile: " + outFilePath.string());
   }
 
   std::cout << "Encoding file: " << inFilePath
@@ -128,6 +128,14 @@ int Encoder::run(std::string inFile, std::string outFile) {
 
     p_input = &input[i];
     comp_str = *p_input;
+
+    if (comp_str.size() != 1) {
+        throw std::runtime_error("Input string reads should be of size 1");
+    }
+
+    if (comp_str[0] == '\r') {
+        continue;
+    }
 
     // To follow the LZW algorithm, we need to skip iterations in case we add
     // a string of three or more characters. Hence, i_add set to -1 here
